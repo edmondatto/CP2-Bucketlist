@@ -95,5 +95,3 @@ ENV/
 
 # Rope project settings
 .ropeproject
-
-/app/hello.py

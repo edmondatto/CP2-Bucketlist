@@ -1,11 +1,13 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 
+# from flask_sqlalchemy import SQLAlchemy
 from instance.config import app_config
-from .hello import hello
+from .auth_endpoints import auth
+from .bucketlists_endpoints import bucketlists, db
 from .restplus import api
 
-db = SQLAlchemy()
+
+# db = SQLAlchemy()
 
 
 def create_app(config_name):
@@ -14,6 +16,7 @@ def create_app(config_name):
     app.config.from_pyfile('config.py')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
-    api.add_namespace(hello)
+    api.add_namespace(bucketlists)
+    api.add_namespace(auth)
     api.init_app(app)
     return app
