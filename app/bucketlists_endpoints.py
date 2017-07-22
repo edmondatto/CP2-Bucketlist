@@ -51,5 +51,9 @@ class BucketlistsWithId(Resource):
         return bucketlist_to_update, 200
 
     def delete(self, id):
-        bucketlist_to_delete = Bucketlist.query.filter_by(id=id).first()
-        bucketlist_to_delete.delete()
+        try:
+            bucketlist_to_delete = Bucketlist.query.filter_by(id=id).first()
+            bucketlist_to_delete.delete()
+            return 200
+        except AttributeError:
+            return 405
