@@ -5,20 +5,21 @@ from app.models import Bucketlist, BucketlistItem, db
 
 bucketlists = api.namespace('bucketlists', description='Bucketlists endpoints')
 
-bucket_list = api.model('bucket_list', {
-    'id': fields.Integer(required=True, readOnly=True),
-    'name': fields.String(required=True),
-    'date_created': fields.DateTime,
-    'date_modified': fields.DateTime,
-    'created_by': fields.Integer,
-})
-
 bucket_list_item = api.model('bucketlist_item', {
     'id': fields.Integer(required=True, readOnly=True),
     'name': fields.String(required=True),
     'date_created': fields.DateTime,
     'date_modified': fields.DateTime,
     'done': fields.Boolean,
+})
+
+bucket_list = api.model('bucket_list', {
+    'id': fields.Integer(required=True, readOnly=True),
+    'name': fields.String(required=True),
+    'items': fields.List(fields.Nested(bucket_list_item)),
+    'date_created': fields.DateTime,
+    'date_modified': fields.DateTime,
+    'created_by': fields.Integer,
 })
 
 bucket_input = api.model('bucket_input', {
@@ -44,7 +45,7 @@ class Bucketlists(Resource):
     @api.marshal_with(bucket_list)
     def get(self):
         """Returns a bucketlist when passed its ID"""
-        fetched_bucketlists = Bucketlist.get_all(self)
+        fetched_bucketlists = Bucketlist.get_all(1)
         return fetched_bucketlists, 200
 
 

@@ -30,7 +30,7 @@ class User(db.Model):
 
     def is_valid_password(self, password_to_check):
         """A method that validates the provided password by comparing it to the hashed version"""
-        Bcrypt().check_password_hash(self.password, password_to_check)
+        return Bcrypt().check_password_hash(self.password, password_to_check)
 
     def save(self):
         """A method that saves a new user to the database or changes to an existing one"""
