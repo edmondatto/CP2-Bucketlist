@@ -2,6 +2,7 @@ from flask import request, abort
 from flask_restplus import Resource, fields
 from .restplus import api
 from app.models import Bucketlist, BucketlistItem, db, User
+from .parsers import pagination_and_search_arguments
 
 bucketlists = api.namespace('bucketlists', description='Bucketlists endpoints')
 
@@ -57,14 +58,24 @@ class Bucketlists(Resource):
 
     @api.marshal_with(bucket_list)
     @api.response(200, 'Bucketlists retrieved successfully')
+    @api.expect(pagination_and_search_arguments, validate=True)
     def get(self):
-        """Returns a bucketlist when passed its ID"""
+        """Returns all bucketlists owned by a particular user"""
         access_token = request.headers.get('Authorization')
         if access_token:
             user_id = User.decode_token(access_token)
             if not isinstance(user_id, str):
-                fetched_bucketlists = Bucketlist.get_all(user_id=user_id)
-                return fetched_bucketlists, 200
+                arguments = pagination_and_search_arguments.parse_args(request)
+                page = arguments.get('page')
+                per_page = arguments.get('per_page')
+                q = arguments.get('q')
+                if q:
+                    fetched_bucketlists = Bucketlist.get_all(user_id=user_id).filter(
+                        Bucketlist.name.ilike('%' + q + '%')).paginate(page, per_page, False)
+                    return fetched_bucketlists.items, 200
+                else:
+                    fetched_bucketlists = Bucketlist.get_all(user_id=user_id).paginate(page, per_page, False)
+                    return fetched_bucketlists.items, 200
         abort(401)
 
 

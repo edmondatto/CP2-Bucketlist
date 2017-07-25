@@ -96,8 +96,7 @@ class Bucketlist(db.Model):
     @staticmethod
     def get_all(user_id):
         """A function that returns all existing bucketlists"""
-        return Bucketlist.query.filter_by(
-            created_by=user_id).all()  # ToDo Apply filter taking user_id into consideration
+        return Bucketlist.query.filter_by(created_by=user_id)
 
     def delete(self):
         """A function that deletes a bucketlist"""
