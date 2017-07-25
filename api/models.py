@@ -6,7 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 from instance.config import Config
 
-# from app import db
+# from api import db
 
 db = SQLAlchemy()
 

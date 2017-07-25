@@ -1,9 +1,9 @@
 from flask import request
-from flask_restplus import Resource, fields
-from .restplus import api
-from app.models import User, db
+from flask_restplus import Resource
+from ..restplus import api
+from api.models import User, db
 import re
-from .serializers import user_input, user_output
+from ..serializers import user_input, user_output
 
 EMAIL_REGEX = re.compile(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)")
 

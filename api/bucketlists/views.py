@@ -1,9 +1,9 @@
 from flask import request, abort
 from flask_restplus import Resource, fields
-from .restplus import api
-from app.models import Bucketlist, BucketlistItem, db, User
-from .parsers import pagination_and_search_arguments
-from .serializers import bucket_list_item, bucket_list, bucket_input, bucketlist_item_input, bucketlist_item_update
+from ..restplus import api
+from api.models import Bucketlist, BucketlistItem, db, User
+from ..parsers import pagination_and_search_arguments
+from ..serializers import bucket_list_item, bucket_list, bucket_input, bucketlist_item_input, bucketlist_item_update
 
 bucketlists = api.namespace('bucketlists', description='Bucketlists endpoints')
 

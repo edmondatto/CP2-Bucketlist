@@ -1,13 +1,8 @@
 from flask import Flask
-
-# from flask_sqlalchemy import SQLAlchemy
 from instance.config import app_config
-from .auth_endpoints import auth
-from .bucketlists_endpoints import bucketlists, db
+from .authentication.views import auth
+from .bucketlists.views import bucketlists, db
 from .restplus import api
-
-
-# db = SQLAlchemy()
 
 
 def create_app(config_name):
