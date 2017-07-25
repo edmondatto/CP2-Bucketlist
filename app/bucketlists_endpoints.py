@@ -30,6 +30,11 @@ bucketlist_item_input = api.model('bucket_list_item_input', {
     'name': fields.String(required=True)
 })
 
+bucketlist_item_update = api.model('bucketlist_item_update', {
+    'name': fields.String(description='Name of the bucketlist item'),
+    'done': fields.Boolean(description='Status of the bucketlist item')
+})
+
 
 @bucketlists.route('/')
 @api.response(401, 'Invalid user')
@@ -151,13 +156,12 @@ class BucketlistItems(Resource):
 @api.header('Authorization', 'JWT Token', required=True)
 @api.response(401, 'User not authorized to access bucketlist')
 class BucketlistItemsWithId(Resource):
-    @api.expect(bucket_input)
+    @api.expect(bucketlist_item_update)
     @api.marshal_with(bucket_list_item)
     @api.response(200, 'Bucketlist item updated successfully')
     @api.response(404, 'Resource not found')
     def put(self, id, item_id):
         """Creates a new item in the specified bucketlist"""
-        new_item_name = request.json['name']
         access_token = request.headers.get('Authorization')
         try:
             bucketlist = Bucketlist.query.filter_by(id=id).first()
@@ -167,7 +171,16 @@ class BucketlistItemsWithId(Resource):
                     try:
                         item_to_update = BucketlistItem.query.filter_by(id=item_id).first()
                         if item_to_update.bucketlist_id == id:
-                            item_to_update.name = new_item_name
+                            try:
+                                new_item_name = request.json['name']
+                                item_to_update.name = new_item_name
+                            except KeyError:
+                                pass
+                            try:
+                                new_item_status = request.json['done']
+                                item_to_update.done = new_item_status
+                            except KeyError:
+                                pass
                             item_to_update.save()
                             return item_to_update, 200
                     except AttributeError:
