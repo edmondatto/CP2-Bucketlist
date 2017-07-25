@@ -64,7 +64,7 @@ class Login(Resource):
                 if auth_token:
                     response = {
                         'message': 'User logged in successfully',
-                        'access_token': auth_token.decode(),
+                        'access_token': auth_token.decode('utf-8'),
                     }
                     return response, 200
             else:
