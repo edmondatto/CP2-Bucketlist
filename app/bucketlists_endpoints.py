@@ -3,38 +3,9 @@ from flask_restplus import Resource, fields
 from .restplus import api
 from app.models import Bucketlist, BucketlistItem, db, User
 from .parsers import pagination_and_search_arguments
+from .serializers import bucket_list_item, bucket_list, bucket_input, bucketlist_item_input, bucketlist_item_update
 
 bucketlists = api.namespace('bucketlists', description='Bucketlists endpoints')
-
-bucket_list_item = api.model('bucketlist_item', {
-    'id': fields.Integer(required=True, readOnly=True),
-    'name': fields.String(required=True),
-    'date_created': fields.DateTime,
-    'date_modified': fields.DateTime,
-    'done': fields.Boolean,
-})
-
-bucket_list = api.model('bucket_list', {
-    'id': fields.Integer(required=True, readOnly=True),
-    'name': fields.String(required=True),
-    'items': fields.List(fields.Nested(bucket_list_item)),
-    'date_created': fields.DateTime,
-    'date_modified': fields.DateTime,
-    'created_by': fields.Integer,
-})
-
-bucket_input = api.model('bucket_input', {
-    'name': fields.String(required=True),
-})
-
-bucketlist_item_input = api.model('bucket_list_item_input', {
-    'name': fields.String(required=True)
-})
-
-bucketlist_item_update = api.model('bucketlist_item_update', {
-    'name': fields.String(description='Name of the bucketlist item'),
-    'done': fields.Boolean(description='Status of the bucketlist item')
-})
 
 
 @bucketlists.route('/')

@@ -3,22 +3,11 @@ from flask_restplus import Resource, fields
 from .restplus import api
 from app.models import User, db
 import re
+from .serializers import user_input, user_output
 
 EMAIL_REGEX = re.compile(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)")
 
 auth = api.namespace('auth', description='Authentication Endpoints')
-
-user_input = api.model('user_input', {
-    'email': fields.String(required=True, description='Email address of new or registered user'),
-    'password': fields.String(required=True, description='Password of the new user'),
-})
-
-user_output = api.model('user_output', {
-    'id': fields.Integer(required=True, readOnly=True, description='The user\'s unique identifier.'),
-    'email': fields.String(require=True, descritpion='User\'s email address'),
-    'password': fields.String(required=True, description='User\'s password'),
-    'registered_on': fields.DateTime,
-})
 
 
 @auth.route('/register')
