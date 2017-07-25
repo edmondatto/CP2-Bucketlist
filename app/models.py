@@ -119,7 +119,7 @@ class BucketlistItem(db.Model):
     __tablename__ = "bucketlist_items"
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50))
+    name = db.Column(db.String(300))
     date_created = db.Column(db.DateTime, default=db.func.now())
     date_modified = db.Column(db.DateTime, default=db.func.now(), onupdate=db.func.now())
     done = db.Column(db.Boolean, default=False)
