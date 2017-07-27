@@ -80,17 +80,17 @@ If everything is working, you should get the output below after running the comm
 | URL Endpoint | HTTP Methods | Summary |
 | -------- | ------------- | --------- |
 | `/auth/register/` | `POST`  | Register a new user|
-|  `/auth/login/` | `POST` | Login and retrieve token|
+|  `/auth/login/` | `POST` | Login user and receive token|
 | `/bucketlists/` | `POST` | Create a new Bucketlist |
-| `/bucketlists/` | `GET` | Retrieve all bucketlists for user |
-| `/bucketlists/?page=1&per_page=3/` | `GET` | Retrieve three bucketlists per page |
- `/bucketlists/?q=name/` | `GET` | searches a bucketlist by the name|
+| `/bucketlists/` | `GET` | Retrieve all bucketlists belonging to a user |
+| `/bucketlists/?page=1&per_page=20/` | `GET` | Retrieve 20 bucketlists per page |
+ `/bucketlists/?q=name/` | `GET` | Search for a bucketlist by it's name|
 | `/bucketlists/<id>/` | `GET` |  Retrieve a bucketlist by ID|
 | `/bucketlists/<id>/` | `PUT` | Update a bucketlist |
 | `/bucketlists/<id>/` | `DELETE` | Delete a bucketlist |
 | `/bucketlists/<id>/items/` | `POST` |  Create items in a bucketlist |
-| `/bucketlists/<id>/items/<item_id>/` | `DELETE`| Delete an item in a bucketlist|
-| `/bucketlists/<id>/items/<item_id>/` | `PUT`| update a bucketlist item details|
+| `/bucketlists/<id>/items/<item_id>/` | `DELETE`| Delete an item from a bucketlist|
+| `/bucketlists/<id>/items/<item_id>/` | `PUT`| Update a bucketlist item's details|
 
 ### Running tests
 ```commandline
