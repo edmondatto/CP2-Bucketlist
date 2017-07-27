@@ -1,5 +1,5 @@
 from flask import request, abort
-from flask_restplus import Resource, fields
+from flask_restplus import Resource
 from ..restplus import api
 from api.models import Bucketlist, BucketlistItem, db, User
 from ..parsers import pagination_and_search_arguments
@@ -13,19 +13,22 @@ bucketlists = api.namespace('bucketlists', description='Bucketlists endpoints')
 @api.header('Authorization', 'JWT Token', required=True)
 class Bucketlists(Resource):
     @api.response(201, 'Bucketlist created successfully')
-    @api.marshal_with(bucket_list)
     @api.expect(bucket_input)
     def post(self):
         """Creates a new bucketlist"""
-        name = request.json['name']
+        data = request.get_json(force=True)
+        name = data.get('name', None)
         access_token = request.headers.get('Authorization')
         if access_token:
             user_id = User.decode_token(access_token)
             if not isinstance(user_id, str):
                 bucketlist = Bucketlist(name=name, created_by=user_id)
                 bucketlist.save()
-                return bucketlist, 201
-        abort(401)
+                response = {
+                    'message': 'Bucketlist created successfully'
+                }
+                return response, 201
+        abort(401, 'Failed! You must be logged in to create a bucketlist.')
 
     @api.marshal_with(bucket_list)
     @api.response(200, 'Bucketlists retrieved successfully')
@@ -77,7 +80,8 @@ class BucketlistsWithId(Resource):
     def put(self, id):
         """Updates the specified bucketlist"""
         access_token = request.headers.get('Authorization')
-        new_name = request.json['name']
+        data = request.get_json(force=True)
+        new_name = data.get('name')
         try:
             bucketlist_to_update = Bucketlist.query.filter_by(id=id).first()
             if access_token:
@@ -90,7 +94,7 @@ class BucketlistsWithId(Resource):
         except AttributeError:
             abort(404, 'Bucketlist {} does not exist'.format(id))
 
-    @api.response(200, 'Bucketlist deleted successfully')
+    @api.response(204, 'Bucketlist deleted successfully')
     def delete(self, id):
         """Deletes a bucketlist when passed its ID"""
         access_token = request.headers.get('Authorization')
@@ -103,23 +107,23 @@ class BucketlistsWithId(Resource):
                     response = {
                         'message': 'Bucketlist {} deleted successfully'.format(id)
                     }
-                    return response, 200
+                    return response, 204
             abort(401)
         except AttributeError:
             abort(404, 'Bucketlist {} does not exist'.format(id))
 
 
 @api.header('Authorization', 'JWT Token', required=True)
-@bucketlists.route('/bucketlists/<int:id>/items')
+@bucketlists.route('/<int:id>/items')
 @api.response(401, 'User not authorized to access bucketlist')
 @api.response(404, 'Bucketlist does not exist')
 class BucketlistItems(Resource):
-    @api.marshal_with(bucketlist_item_input)
-    @api.expect(bucket_input)
+    @api.expect(bucketlist_item_input)
     @api.response(201, 'Bucketlist list item created successuflly')
     def post(self, id):
         """Creates a new item in the specified bucketlist"""
-        item_name = request.json['name']
+        data = request.get_json(force=True)
+        item_name = data.get('name')
         access_token = request.headers.get('Authorization')
         try:
             bucketlist = Bucketlist.query.filter_by(id=id).first()
@@ -128,13 +132,16 @@ class BucketlistItems(Resource):
                 if not isinstance(user_id, str) and user_id == bucketlist.created_by:
                     new_bucketlist_item = BucketlistItem(item_name, id)
                     new_bucketlist_item.save()
-                    return new_bucketlist_item, 201
+                    response = {
+                        'message': 'Bucketlist item created successfully'
+                    }
+                    return response, 201
             abort(401)
         except AttributeError:
             abort(404, 'Bucketlist {} does not exist'.format(id))
 
 
-@bucketlists.route('/bucketlists/<int:id>/items/<item_id>')
+@bucketlists.route('/<int:id>/items/<int:item_id>')
 @api.header('Authorization', 'JWT Token', required=True)
 @api.response(401, 'User not authorized to access bucketlist')
 class BucketlistItemsWithId(Resource):

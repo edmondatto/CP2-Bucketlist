@@ -19,30 +19,36 @@ class Register(Resource):
     @api.expect(user_input)
     def post(self):
         """Creates a new user when passed an email and a password"""
-        new_user_email = request.json['email'].strip()
-        new_user_password = request.json['password'].strip()
-        if not EMAIL_REGEX.match(new_user_email):
+        data = request.get_json(force=True)
+        new_user_email = data.get('email')
+        new_user_password = data.get('password')
+        if new_user_email and not EMAIL_REGEX.match(new_user_email):
             response = {
                 'message': 'Invalid email format! Please enter a valid email',
             }
             return response, 400
-        if not User.query.filter_by(email=new_user_email).first():
-            try:
-                new_user = User(new_user_email, new_user_password)
-                new_user.save()
-                response = {
-                    'message': 'User created successfully!'
-                }
-                return response, 201
-            except Exception as e:
-                response = {
-                    'message': str(e)
-                }
-                return response, 401
+        if new_user_email and new_user_password and EMAIL_REGEX.match(new_user_email):
+            if not User.query.filter_by(email=new_user_email).first():
+                try:
+                    new_user = User(new_user_email, new_user_password)
+                    new_user.save()
+                    response = {
+                        'message': 'User created successfully! Please log in.'
+                    }
+                    return response, 201
+                except Exception as e:
+                    response = {
+                        'message': str(e)
+                    }
+                    return response, 401
+            response = {
+                'message': 'User already registered. Log in.'
+            }
+            return response, 409
         response = {
-            'message': 'User already registered. Log in.'
+            'message': 'Registration failed. Enter a valid email and password'
         }
-        return response, 409
+        return response, 400
 
 
 @auth.route('/login')
@@ -54,10 +60,18 @@ class Login(Resource):
     @api.expect(user_input)
     def post(self):
         """Logs in an existing user when passed an email and the correct password"""
+        data = request.get_json(force=True)
         try:
-            user_email = request.json['email'].strip()
-            user_password = request.json['password'].strip()
-            if not EMAIL_REGEX.match(user_email):
+            user_email = data.get('email', None)
+            user_password = data.get('password', None)
+            if user_email and user_password:
+                pass
+            else:
+                response = {
+                    'message': 'Both email and password are required! Try again.'
+                }
+                return response, 401
+            if user_email and not EMAIL_REGEX.match(user_email):
                 response = {
                     'message': 'Invalid email format! Please enter a valid email',
                 }
