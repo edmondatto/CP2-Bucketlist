@@ -12,5 +12,6 @@ def create_app(config_name):
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
     api.add_namespace(auth)
+    # api.add_namespace(bucketlists)
     api.init_app(app)
     return app
