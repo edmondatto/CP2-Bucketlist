@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.org/edmondatto/CP2-Bucketlist.svg?branch=develop)](https://travis-ci.org/edmondatto/CP2-Bucketlist)
+[![Coverage Status](https://coveralls.io/repos/github/edmondatto/CP2-Bucketlist/badge.svg?branch=develop)](https://coveralls.io/github/edmondatto/CP2-Bucketlist?branch=develop)
+[![license](https://img.shields.io/github/license/mashape/apistatus.svg)]()
+
 ## Bucketlist API
 
 ### Overview
@@ -77,7 +81,7 @@ If everything is working, you should get the output below after running the comm
 ### Supported Endpoints
 
 
-| URL Endpoint | HTTP Methods | Summary |
+| URL Endpoint | HTTP Methods | Action |
 | -------- | ------------- | --------- |
 | `/auth/register/` | `POST`  | Register a new user|
 |  `/auth/login/` | `POST` | Login user and receive token|

@@ -12,6 +12,7 @@ bucketlists = api.namespace('bucketlists', description='Bucketlists endpoints')
 @api.response(401, 'Invalid user')
 @api.header('Authorization', 'JWT Token', required=True)
 class Bucketlists(Resource):
+    @api.marshal_with(bucket_list)
     @api.response(201, 'Bucketlist created successfully')
     @api.expect(bucket_input)
     def post(self):
@@ -24,10 +25,7 @@ class Bucketlists(Resource):
             if not isinstance(user_id, str):
                 bucketlist = Bucketlist(name=name, created_by=user_id)
                 bucketlist.save()
-                response = {
-                    'message': 'Bucketlist created successfully'
-                }
-                return response, 201
+                return bucketlist, 201
         abort(401, 'Failed! You must be logged in to create a bucketlist.')
 
     @api.marshal_with(bucket_list)
@@ -50,7 +48,7 @@ class Bucketlists(Resource):
                 else:
                     fetched_bucketlists = Bucketlist.get_all(user_id=user_id).paginate(page, per_page, False)
                     return fetched_bucketlists.items, 200
-        abort(401)
+        abort(401, 'Invalid user. Please log in to view these bucketlists.')
 
 
 @bucketlists.route('/<int:id>')
@@ -70,7 +68,7 @@ class BucketlistsWithId(Resource):
                 user_id = User.decode_token(access_token)
                 if not isinstance(user_id, str) and user_id == queried_bucketlist.created_by:
                     return queried_bucketlist, 200
-            abort(401)
+            abort(401, 'Invalid user. Please log in to view a bucketlist.')
         except AttributeError:
             abort(404, 'Bucketlist {} does not exist'.format(id))
 
@@ -90,7 +88,7 @@ class BucketlistsWithId(Resource):
                     bucketlist_to_update.name = new_name
                     bucketlist_to_update.save()
                     return bucketlist_to_update, 200
-            abort(401)
+            abort(401, 'Invalid user. Please log in to update a bucketlist.')
         except AttributeError:
             abort(404, 'Bucketlist {} does not exist'.format(id))
 
@@ -108,7 +106,7 @@ class BucketlistsWithId(Resource):
                         'message': 'Bucketlist {} deleted successfully'.format(id)
                     }
                     return response, 204
-            abort(401)
+            abort(401, 'Invalid user. Please log in to delete a bucketlist.')
         except AttributeError:
             abort(404, 'Bucketlist {} does not exist'.format(id))
 
@@ -119,6 +117,7 @@ class BucketlistsWithId(Resource):
 @api.response(404, 'Bucketlist does not exist')
 class BucketlistItems(Resource):
     @api.expect(bucketlist_item_input)
+    @api.marshal_with(bucket_list_item)
     @api.response(201, 'Bucketlist list item created successuflly')
     def post(self, id):
         """Creates a new item in the specified bucketlist"""
@@ -132,10 +131,7 @@ class BucketlistItems(Resource):
                 if not isinstance(user_id, str) and user_id == bucketlist.created_by:
                     new_bucketlist_item = BucketlistItem(item_name, id)
                     new_bucketlist_item.save()
-                    response = {
-                        'message': 'Bucketlist item created successfully'
-                    }
-                    return response, 201
+                    return new_bucketlist_item, 201
             abort(401)
         except AttributeError:
             abort(404, 'Bucketlist {} does not exist'.format(id))

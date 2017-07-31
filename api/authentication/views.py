@@ -3,7 +3,7 @@ from flask_restplus import Resource
 from ..restplus import api
 from api.models import User, db
 import re
-from ..serializers import user_input, user_output
+from ..serializers import user_input
 
 EMAIL_REGEX = re.compile(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)")
 
@@ -82,7 +82,7 @@ class Login(Resource):
                 if auth_token:
                     response = {
                         'message': 'User logged in successfully',
-                        'access_token': auth_token.decode('utf-8'),
+                        'access_token': auth_token.decode(),
                     }
                     return response, 200
             else:

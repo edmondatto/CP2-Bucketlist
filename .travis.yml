@@ -9,8 +9,10 @@ install:
   - "pip install -r requirements.txt"
   - "pip install coverage"
   - "pip install coveralls"
+  - "pip install codeclimate-test-reporter"
 # command to run tests
 script:
   - nosetests --cover-package=api --with-coverage
 after_success:
   coveralls
+  - CODECLIMATE_REPO_TOKEN=74699037cb0b2970ef6a67dcc05d1b9c8540ed307b206f3bca4f39ead60227fb codeclimate-test-reporter

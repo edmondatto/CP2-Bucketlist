@@ -61,6 +61,11 @@ class AuthenticationTestCase(unittest.TestCase):
             'password': 'password'
         }
 
+        user_data_4 = {
+            'email': '',
+            'password': 'password'
+        }
+
         # Attempt user registration with data-set 1
         response_1 = self.client.post('/auth/register', data=json.dumps(user_data_1),
                                       headers={'content': 'application/json'})
@@ -84,6 +89,22 @@ class AuthenticationTestCase(unittest.TestCase):
         self.assertEqual(result_3['message'], 'Invalid email format! Please enter a valid email',
                          msg='Failed to detect invalid password format')
         self.assertEqual(response_3.status_code, 400)
+
+        # Attempt user registration with data-set 4
+        response_4 = self.client.post('/auth/register', data=json.dumps(user_data_4),
+                                      headers={'content': 'application/json'})
+        result_4 = json.loads(response_4.data.decode())
+        self.assertEqual(result_4['message'], 'Registration failed. Enter a valid email and password',
+                         msg='Failed to detect invalid password format')
+        self.assertEqual(response_4.status_code, 400)
+
+        # Attempt user login with data-set 1
+        response_5 = self.client.post('/auth/login', data=json.dumps(user_data_1),
+                                      headers={'content': 'application/json'})
+        result_5 = json.loads(response_5.data.decode())
+        self.assertEqual(result_5['message'], 'Invalid email format! Please enter a valid email',
+                         msg='Failed to detect invalid password format')
+        self.assertEqual(response_5.status_code, 400)
 
     def test_rejects_incomplete_data_input(self):
         incomplete_user_data = {
